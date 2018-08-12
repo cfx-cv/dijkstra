@@ -35,12 +35,11 @@ func FindDistanceAndDuration(origin, destination Place, apiKey string) (*Distanc
 	}
 	defer resp.Body.Close()
 
-	distance, duration, err := parseDistanceMatrixResponse(resp)
+	result, err := parseDistanceMatrixResponse(resp)
 	if err != nil {
 		return nil, err
 	}
-
-	return &DistanceDuration{*distance, *duration}, nil
+	return result, nil
 }
 
 func buildDistanceMatrixURL(origin, destination Place, apiKey string) string {
@@ -51,7 +50,7 @@ func buildDistanceMatrixURL(origin, destination Place, apiKey string) string {
 	return distanceMatrixURL + u.Encode()
 }
 
-func parseDistanceMatrixResponse(resp *http.Response) (*Distance, *Duration, error) {
+func parseDistanceMatrixResponse(resp *http.Response) (*DistanceDuration, error) {
 	var body struct {
 		Rows []struct {
 			Elements []struct {
@@ -66,16 +65,16 @@ func parseDistanceMatrixResponse(resp *http.Response) (*Distance, *Duration, err
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if status := body.Status; status != "OK" {
-		return nil, nil, errors.New(status)
+		return nil, errors.New(status)
 	}
 	if status := body.Rows[0].Elements[0].Status; status != "OK" {
-		return nil, nil, errors.New(status)
+		return nil, errors.New(status)
 	}
 
-	distance := &body.Rows[0].Elements[0].Distance
-	duration := &body.Rows[0].Elements[0].Duration
-	return distance, duration, nil
+	distance := body.Rows[0].Elements[0].Distance
+	duration := body.Rows[0].Elements[0].Duration
+	return &DistanceDuration{distance, duration}, nil
 }

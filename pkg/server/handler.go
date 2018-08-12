@@ -2,13 +2,12 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/cfx-cv/trail/pkg/trail"
 )
-
-type Env struct{}
 
 type DistanceRequest struct {
 	Origin      trail.Place `json:"origin"`
@@ -17,20 +16,30 @@ type DistanceRequest struct {
 	APIKey string `json:"api_key"`
 }
 
-func (e *Env) distance(w http.ResponseWriter, r *http.Request) {
+func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 	var request DistanceRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		log.Print(err)
 		return
 	}
 
-	distance, err := trail.FindDistance(request.Origin, request.Destination, request.APIKey)
+	key := fmt.Sprintf("%v:%v", request.Origin, request.Destination)
+	if value, err := s.client.Get(key).Result(); err == nil {
+		if err := json.NewEncoder(w).Encode(value); err != nil {
+			return
+		}
+
+		log.Print(err)
+	}
+
+	result, err := trail.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(distance); err != nil {
+	s.client.Set(key, result, s.expiration).Err()
+	if err := json.NewEncoder(w).Encode(result); err != nil {
 		log.Print(err)
 		return
 	}

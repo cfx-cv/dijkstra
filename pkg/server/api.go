@@ -9,12 +9,10 @@ const (
 	distanceURL string = "/distance"
 )
 
-// Start initializes API endpoints
-func Start(port string, apiKey string) {
-	env := Env{}
-	http.HandleFunc(distanceURL, env.distance)
+func (s *Server) Start() {
+	http.HandleFunc(distanceURL, s.distance)
 
-	err := http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
