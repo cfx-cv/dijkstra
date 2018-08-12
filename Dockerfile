@@ -1,7 +1,4 @@
 FROM golang:1.10
 
-WORKDIR /go/src/app
+WORKDIR /go/src/github.com/cfx-cv/trail
 COPY . .
-
-RUN go get -d -v ./...
-RUN go install -v ./...

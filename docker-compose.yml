@@ -3,9 +3,12 @@ version: '3'
 services:
   app:
     build: .
-    command: ./app
+    command: ["./scripts/wait-for-it.sh", "db:6379", "--", "./scripts/run.sh"]
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_EXPIRATION=${REDIS_EXPIRATION}
     volumes:
-      - .:/go/src/app:z
+      - .:/go/src/github.com/cfx-cv/trail:z
     ports:
       - "3002:8000"
     depends_on:
