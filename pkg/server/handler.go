@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -25,10 +24,14 @@ func (e *Env) distance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	distance := trail.CalculateDistance(request.Origin, request.Destination, request.APIKey)
-	fmt.Println(distance)
-	err := json.NewEncoder(w).Encode(*distance)
+	distance, err := trail.CalculateDistance(request.Origin, request.Destination, request.APIKey)
 	if err != nil {
-		log.Println(err)
+		log.Print(err)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(distance); err != nil {
+		log.Print(err)
+		return
 	}
 }
