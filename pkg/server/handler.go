@@ -25,11 +25,9 @@ func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 
 	key := fmt.Sprintf("%v:%v", request.Origin, request.Destination)
 	if value, err := s.client.Get(key).Result(); err == nil {
-		if err := json.NewEncoder(w).Encode(value); err != nil {
+		if _, err := w.Write([]byte(value)); err == nil {
 			return
 		}
-
-		log.Print(err)
 	}
 
 	result, err := trail.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
@@ -37,9 +35,14 @@ func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
+	value, err := json.Marshal(result)
+	if err != nil {
+		log.Print(err)
+		return
+	}
 
-	s.client.Set(key, result, s.expiration).Err()
-	if err := json.NewEncoder(w).Encode(result); err != nil {
+	s.client.Set(key, value, s.expiration).Err()
+	if _, err = w.Write(value); err != nil {
 		log.Print(err)
 		return
 	}
