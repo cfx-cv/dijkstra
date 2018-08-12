@@ -24,7 +24,7 @@ func (e *Env) distance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	distance, err := trail.CalculateDistance(request.Origin, request.Destination, request.APIKey)
+	distance, err := trail.FindDistance(request.Origin, request.Destination, request.APIKey)
 	if err != nil {
 		log.Print(err)
 		return
