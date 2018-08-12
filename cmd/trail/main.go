@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"../pkg/server"
+	"github.com/cfx-cv/trail/pkg/server"
 )
 
 func main() {

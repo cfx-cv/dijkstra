@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"../trail"
+	"github.com/cfx-cv/trail/pkg/trail"
 )
 
 type Env struct{}
