@@ -6,12 +6,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/cfx-cv/trail/pkg/trail"
+	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
 )
 
 type DistanceRequest struct {
-	Origin      trail.Place `json:"origin"`
-	Destination trail.Place `json:"destination"`
+	Origin      dijkstra.Place `json:"origin"`
+	Destination dijkstra.Place `json:"destination"`
 
 	APIKey string `json:"api_key"`
 }
@@ -30,7 +30,7 @@ func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	result, err := trail.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
+	result, err := dijkstra.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
 	if err != nil {
 		log.Print(err)
 		return

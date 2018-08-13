@@ -1,4 +1,4 @@
-package trail
+package dijkstra
 
 type Place struct {
 	Latitude  float64 `json:"latitude"`

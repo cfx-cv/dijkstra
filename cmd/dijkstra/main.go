@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cfx-cv/trail/pkg/server"
+	"github.com/cfx-cv/dijkstra/pkg/server"
 	"github.com/go-redis/redis"
 )
 

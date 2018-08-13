@@ -1,4 +1,4 @@
 FROM golang:1.10
 
-WORKDIR /go/src/github.com/cfx-cv/trail
+WORKDIR /go/src/github.com/cfx-cv/dijkstra
 COPY . .

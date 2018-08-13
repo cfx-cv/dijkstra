@@ -1,4 +1,4 @@
-package trail
+package dijkstra
 
 import (
 	"encoding/json"
