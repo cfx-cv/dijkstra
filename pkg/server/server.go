@@ -1,9 +1,15 @@
 package server
 
 import (
+	"log"
+	"net/http"
 	"time"
 
 	"github.com/go-redis/redis"
+)
+
+const (
+	distanceURL string = "/distance"
 )
 
 type Server struct {
@@ -13,5 +19,14 @@ type Server struct {
 }
 
 func NewServer(client *redis.Client, expiration time.Duration) *Server {
-	return &Server{client: client, expiration: time.Duration(expiration)}
+	return &Server{client: client, expiration: expiration}
+}
+
+func (s *Server) Start() {
+	http.HandleFunc(distanceURL, s.distance)
+
+	err := http.ListenAndServe(":8000", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
