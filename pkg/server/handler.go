@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -23,26 +22,14 @@ func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := fmt.Sprintf("%v:%v", request.Origin, request.Destination)
-	if value, err := s.client.Get(key).Result(); err == nil {
-		if _, err := w.Write([]byte(value)); err == nil {
-			return
-		}
-	}
-
-	result, err := dijkstra.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	value, err := json.Marshal(result)
+	d := dijkstra.NewDijkstra(s.store)
+	result, err := d.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
-	s.client.Set(key, value, s.expiration).Err()
-	if _, err = w.Write(value); err != nil {
+	if err = json.NewEncoder(w).Encode(result); err != nil {
 		log.Print(err)
 		return
 	}

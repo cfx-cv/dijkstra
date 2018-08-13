@@ -27,7 +27,12 @@ const (
 	distanceMatrixURL = "https://maps.googleapis.com/maps/api/distancematrix/json?"
 )
 
-func FindDistanceAndDuration(origin, destination Place, apiKey string) (*DistanceDuration, error) {
+func (d *Dijkstra) FindDistanceAndDuration(origin, destination Place, apiKey string) (*DistanceDuration, error) {
+	key := generateKey(origin, destination)
+	if value, ok := d.store.Get(key); ok {
+		return value, nil
+	}
+
 	url := buildDistanceMatrixURL(origin, destination, apiKey)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -39,6 +44,7 @@ func FindDistanceAndDuration(origin, destination Place, apiKey string) (*Distanc
 	if err != nil {
 		return nil, err
 	}
+	defer d.store.Set(key, result)
 	return result, nil
 }
 

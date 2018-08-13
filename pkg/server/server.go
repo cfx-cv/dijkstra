@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
+	dredis "github.com/cfx-cv/dijkstra/pkg/redis"
 	"github.com/go-redis/redis"
 )
 
@@ -13,13 +15,12 @@ const (
 )
 
 type Server struct {
-	// redis
-	client     *redis.Client
-	expiration time.Duration
+	store dijkstra.Store
 }
 
 func NewServer(client *redis.Client, expiration time.Duration) *Server {
-	return &Server{client: client, expiration: expiration}
+	store := dredis.NewStore(client, expiration)
+	return &Server{store: store}
 }
 
 func (s *Server) Start() {
