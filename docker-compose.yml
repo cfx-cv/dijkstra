@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   app:
@@ -9,10 +9,14 @@ services:
       - REDIS_EXPIRATION=${REDIS_EXPIRATION}
     volumes:
       - .:/go/src/github.com/cfx-cv/dijkstra:z
-    ports:
-      - "3002:8000"
+    expose:
+      - "80"
     depends_on:
       - db
+    networks:
+      default:
+        aliases:
+          - dijkstra_app
 
   db:
     image: redis:4.0
@@ -21,3 +25,7 @@ services:
 
 volumes:
   redis_volume:
+
+networks:
+  default:
+    name: gofeed-network

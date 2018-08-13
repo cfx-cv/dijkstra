@@ -29,7 +29,7 @@ func (s *Server) Start() {
 	router := mux.NewRouter()
 	router.HandleFunc(distanceURL, s.distance).Methods("GET")
 
-	err := http.ListenAndServe(":8000", router)
+	err := http.ListenAndServe(":80", router)
 	if err != nil {
 		log.Fatal(err)
 	}
