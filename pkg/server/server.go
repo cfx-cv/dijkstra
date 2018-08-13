@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-redis/redis"
+	"github.com/gorilla/mux"
+
 	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
 	dredis "github.com/cfx-cv/dijkstra/pkg/redis"
-	"github.com/go-redis/redis"
 )
 
 const (
@@ -24,9 +26,10 @@ func NewServer(client *redis.Client, expiration time.Duration) *Server {
 }
 
 func (s *Server) Start() {
-	http.HandleFunc(distanceURL, s.distance)
+	router := mux.NewRouter()
+	router.HandleFunc(distanceURL, s.distance).Methods("GET")
 
-	err := http.ListenAndServe(":8000", nil)
+	err := http.ListenAndServe(":8000", router)
 	if err != nil {
 		log.Fatal(err)
 	}

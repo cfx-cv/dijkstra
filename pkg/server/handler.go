@@ -4,26 +4,16 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
 )
 
-type DistanceRequest struct {
-	Origin      dijkstra.Place `json:"origin"`
-	Destination dijkstra.Place `json:"destination"`
-
-	APIKey string `json:"api_key"`
-}
-
 func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
-	var request DistanceRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		log.Print(err)
-		return
-	}
-
 	d := dijkstra.NewDijkstra(s.store)
-	result, err := d.FindDistanceAndDuration(request.Origin, request.Destination, request.APIKey)
+	origin, destination, apiKey := parseURL(r.URL.Query())
+
+	result, err := d.FindDistanceAndDuration(origin, destination, apiKey)
 	if err != nil {
 		log.Print(err)
 		return
@@ -33,4 +23,11 @@ func (s *Server) distance(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
+}
+
+func parseURL(u url.Values) (origin, destination, apiKey string) {
+	origin = u.Get("origin")
+	destination = u.Get("destination")
+	apiKey = u.Get("api_key")
+	return
 }

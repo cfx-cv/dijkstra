@@ -3,7 +3,6 @@ package dijkstra
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -27,7 +26,7 @@ const (
 	distanceMatrixURL = "https://maps.googleapis.com/maps/api/distancematrix/json?"
 )
 
-func (d *Dijkstra) FindDistanceAndDuration(origin, destination Place, apiKey string) (*DistanceDuration, error) {
+func (d *Dijkstra) FindDistanceAndDuration(origin, destination, apiKey string) (*DistanceDuration, error) {
 	key := generateKey(origin, destination)
 	if value, ok := d.store.Get(key); ok {
 		return value, nil
@@ -48,10 +47,10 @@ func (d *Dijkstra) FindDistanceAndDuration(origin, destination Place, apiKey str
 	return result, nil
 }
 
-func buildDistanceMatrixURL(origin, destination Place, apiKey string) string {
+func buildDistanceMatrixURL(origin, destination, apiKey string) string {
 	u := url.Values{}
-	u.Add("origins", fmt.Sprintf("%f,%f", origin.Latitude, origin.Longitude))
-	u.Add("destinations", fmt.Sprintf("%f,%f", destination.Latitude, destination.Longitude))
+	u.Add("origins", origin)
+	u.Add("destinations", destination)
 	u.Add("key", apiKey)
 	return distanceMatrixURL + u.Encode()
 }

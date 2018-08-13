@@ -9,6 +9,6 @@ type Store interface {
 	Set(key string, value *DistanceDuration)
 }
 
-func generateKey(origin, destination Place) string {
-	return fmt.Sprintf("%v:%v", origin, destination)
+func generateKey(origin, destination string) string {
+	return fmt.Sprintf("%s:%s", origin, destination)
 }
