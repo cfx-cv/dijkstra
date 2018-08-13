@@ -27,7 +27,7 @@ const (
 )
 
 func (d *Dijkstra) FindDistanceAndDuration(origin, destination, apiKey string) (*DistanceDuration, error) {
-	key := generateKey(origin, destination)
+	key := generateDistanceKey(origin, destination)
 	if value, ok := d.store.Get(key); ok {
 		return value, nil
 	}
