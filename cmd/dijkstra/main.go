@@ -9,11 +9,6 @@ import (
 	"github.com/go-redis/redis"
 )
 
-var (
-	client     *redis.Client
-	expiration time.Duration
-)
-
 func main() {
 	client := newClient()
 	expiration := parseExpiration()
@@ -22,7 +17,7 @@ func main() {
 }
 
 func newClient() *redis.Client {
-	client = redis.NewClient(&redis.Options{
+	client := redis.NewClient(&redis.Options{
 		Addr: os.Getenv("REDIS_URL"),
 	})
 
