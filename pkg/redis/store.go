@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
+	"github.com/cfx-cv/herald/pkg/common"
 	"github.com/go-redis/redis"
 )
 
@@ -32,5 +33,6 @@ func (s *Store) Set(key string, value *dijkstra.DistanceDuration) {
 		s.client.Set(key, j, s.expiration)
 	} else {
 		log.Print(err)
+		common.Publish(common.DijkstraErrors, err.Error())
 	}
 }

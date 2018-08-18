@@ -10,6 +10,7 @@ import (
 
 	"github.com/cfx-cv/dijkstra/pkg/dijkstra"
 	dredis "github.com/cfx-cv/dijkstra/pkg/redis"
+	"github.com/cfx-cv/herald/pkg/common"
 )
 
 const (
@@ -32,5 +33,6 @@ func (s *Server) Start() {
 	err := http.ListenAndServe(":80", router)
 	if err != nil {
 		log.Fatal(err)
+		common.Publish(common.DijkstraErrors, err.Error())
 	}
 }
